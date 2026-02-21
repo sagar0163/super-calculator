@@ -1,0 +1,24 @@
+{
+  "name": "super-calculator",
+  "version": "0.1.0",
+  "description": "A powerful calculator for complex mathematical problems",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "calc": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "calculator",
+    "math",
+    "complex",
+    "scientific",
+    "statistics"
+  ],
+  "author": "Sagar Jadhav",
+  "license": "MIT"
+}
