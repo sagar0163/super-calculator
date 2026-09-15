@@ -5,13 +5,17 @@
 export class Statistics {
   // Mean (average)
   mean(values) {
-    if (values.length === 0) return 0;
+    if (!Array.isArray(values) || values.length === 0) {
+      throw new Error('Cannot compute mean of empty array');
+    }
     return values.reduce((a, b) => a + b, 0) / values.length;
   }
 
   // Median
   median(values) {
-    if (values.length === 0) return 0;
+    if (!Array.isArray(values) || values.length === 0) {
+      throw new Error('Cannot compute median of empty array');
+    }
     const sorted = [...values].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
     return sorted.length % 2 !== 0
@@ -21,7 +25,9 @@ export class Statistics {
 
   // Mode
   mode(values) {
-    if (values.length === 0) return null;
+    if (!Array.isArray(values) || values.length === 0) {
+      throw new Error('Cannot compute mode of empty array');
+    }
     const freq = {};
     let maxFreq = 0;
     let modes = [];
@@ -37,26 +43,38 @@ export class Statistics {
     return modes.length === values.length ? null : modes;
   }
 
-  // Variance
-  variance(values) {
-    if (values.length === 0) return 0;
+  // Variance (sample by default, population with sample=false)
+  variance(values, sample = true) {
+    if (!Array.isArray(values) || values.length === 0) {
+      throw new Error('Cannot compute variance of empty array');
+    }
+    if (sample && values.length === 1) {
+      throw new Error('Cannot compute sample variance with a single value');
+    }
     const avg = this.mean(values);
     const squaredDiffs = values.map(val => Math.pow(val - avg, 2));
-    return this.mean(squaredDiffs);
+    const sum = squaredDiffs.reduce((a, b) => a + b, 0);
+    return sum / (sample ? values.length - 1 : values.length);
   }
 
-  // Standard Deviation
-  stdDev(values) {
-    return Math.sqrt(this.variance(values));
+  // Standard Deviation (sample by default, population with sample=false)
+  stdDev(values, sample = true) {
+    return Math.sqrt(this.variance(values, sample));
   }
 
-  // Min/Max
+  // Min (iterative reduce — safe for arrays of any size)
   min(values) {
-    return Math.min(...values);
+    if (!Array.isArray(values) || values.length === 0) {
+      throw new Error('Cannot compute min of empty array');
+    }
+    return values.reduce((a, b) => (a < b ? a : b));
   }
 
   max(values) {
-    return Math.max(...values);
+    if (!Array.isArray(values) || values.length === 0) {
+      throw new Error('Cannot compute max of empty array');
+    }
+    return values.reduce((a, b) => (a > b ? a : b));
   }
 
   // Range
@@ -86,7 +104,7 @@ export class Statistics {
   // Correlation coefficient
   correlation(x, y) {
     if (x.length !== y.length || x.length === 0) {
-      throw new Error('Arrays must have same length');
+      throw new Error('Arrays must have same length and be non-empty');
     }
     const n = x.length;
     const meanX = this.mean(x);

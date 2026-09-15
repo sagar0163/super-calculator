@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import Calculator from '../../src/index.js';
+import Matrix from '../../src/operations/matrix.js';
 
 describe('Calculator', () => {
   const calc = new Calculator();
@@ -111,7 +112,176 @@ describe('Statistics', () => {
     expect(stats.median([1, 2, 3, 4, 5])).toBe(3);
   });
 
-  it('should calculate standard deviation', () => {
-    expect(stats.stdDev([2, 4, 4, 4, 5, 5, 7, 9])).toBe(2);
+  it('should calculate population standard deviation', () => {
+    expect(stats.stdDev([2, 4, 4, 4, 5, 5, 7, 9], false)).toBe(2);
+  });
+
+  it('should calculate sample standard deviation by default', () => {
+    expect(stats.stdDev([2, 4, 4, 4, 5, 5, 7, 9])).toBeCloseTo(2.138);
+  });
+});
+
+describe('Statistics Validation', () => {
+  const { stats } = new Calculator();
+
+  it('mean throws on empty array', () => {
+    expect(() => stats.mean([])).toThrow('Cannot compute mean of empty array');
+  });
+
+  it('median throws on empty array', () => {
+    expect(() => stats.median([])).toThrow('Cannot compute median of empty array');
+  });
+
+  it('mode throws on empty array', () => {
+    expect(() => stats.mode([])).toThrow('Cannot compute mode of empty array');
+  });
+
+  it('variance throws on empty array', () => {
+    expect(() => stats.variance([])).toThrow('Cannot compute variance of empty array');
+  });
+
+  it('stdDev throws on empty array', () => {
+    expect(() => stats.stdDev([])).toThrow('Cannot compute variance of empty array');
+  });
+
+  it('min throws on empty array', () => {
+    expect(() => stats.min([])).toThrow('Cannot compute min of empty array');
+  });
+
+  it('max throws on empty array', () => {
+    expect(() => stats.max([])).toThrow('Cannot compute max of empty array');
+  });
+
+  it('min/max handle large arrays without overflow', () => {
+    const big = Array.from({ length: 100000 }, (_, i) => i + 1);
+    expect(stats.min(big)).toBe(1);
+    expect(stats.max(big)).toBe(100000);
+  });
+
+  it('variance defaults to sample variance (n-1)', () => {
+    const values = [1, 2, 3, 4, 5];
+    const popVar = stats.variance(values, false);
+    const sampleVar = stats.variance(values, true);
+    expect(sampleVar).toBeCloseTo(2.5);
+    expect(popVar).toBeCloseTo(2.0);
+  });
+
+  it('sample variance throws with single value', () => {
+    expect(() => stats.variance([5], true)).toThrow('Cannot compute sample variance with a single value');
+  });
+
+  it('population variance works with single value', () => {
+    expect(stats.variance([5], false)).toBe(0);
+  });
+});
+
+describe('Matrix Validation', () => {
+  it('throws on jagged arrays', () => {
+    expect(() => new Matrix([[1, 2], [3]])).toThrow(/row 1 has length 1, expected 2/);
+  });
+
+  it('throws on non-array rows', () => {
+    expect(() => new Matrix([1, 2, 3])).toThrow(/row 0 is not an array/);
+  });
+
+  it('accepts valid uniform matrices', () => {
+    const m = new Matrix([[1, 2, 3], [4, 5, 6]]);
+    expect(m.rows).toBe(2);
+    expect(m.cols).toBe(3);
+  });
+
+  it('throws on empty matrix', () => {
+    expect(() => new Matrix([])).toThrow('Invalid matrix data');
+  });
+});
+
+describe('Financial Validation', () => {
+  const { finance } = new Calculator();
+
+  it('simpleInterest rejects negative principal', () => {
+    expect(() => finance.simpleInterest(-1000, 5, 10)).toThrow('Principal must be non-negative');
+  });
+
+  it('simpleInterest rejects zero rate', () => {
+    expect(() => finance.simpleInterest(1000, 0, 10)).toThrow('Rate must be positive');
+  });
+
+  it('compoundInterest rejects negative principal', () => {
+    expect(() => finance.compoundInterest(-1000, 5, 10)).toThrow('Principal must be non-negative');
+  });
+
+  it('compoundInterest rejects negative time', () => {
+    expect(() => finance.compoundInterest(1000, 5, -1)).toThrow('Time must be non-negative');
+  });
+
+  it('emi rejects negative principal', () => {
+    expect(() => finance.emi(-100000, 6, 30)).toThrow('Principal must be positive');
+  });
+
+  it('emi rejects zero term', () => {
+    expect(() => finance.emi(100000, 6, 0)).toThrow('Loan term must be positive');
+  });
+
+  it('futureValue rejects negative principal', () => {
+    expect(() => finance.futureValue(-1000, 5, 10)).toThrow('Principal must be non-negative');
+  });
+
+  it('presentValue rejects negative future value', () => {
+    expect(() => finance.presentValue(-1000, 5, 10)).toThrow('Future value must be non-negative');
+  });
+
+  it('cagr rejects zero initial value', () => {
+    expect(() => finance.cagr(0, 1000, 5)).toThrow('Initial value must be positive');
+  });
+
+  it('cagr rejects zero years', () => {
+    expect(() => finance.cagr(1000, 2000, 0)).toThrow('Years must be positive');
+  });
+
+  it('npv rejects zero rate', () => {
+    expect(() => finance.npv(0, [100, 200])).toThrow('Rate must be positive');
+  });
+
+  it('npv rejects empty cash flows', () => {
+    expect(() => finance.npv(5, [])).toThrow('Cash flows must be a non-empty array');
+  });
+
+  it('valid inputs still produce correct results', () => {
+    expect(finance.simpleInterest(1000, 5, 10)).toBe(1500);
+    expect(finance.compoundInterest(1000, 5, 1)).toBeCloseTo(1051.16);
+  });
+});
+
+describe('EquationSolver Validation', () => {
+  const { equations } = new Calculator();
+
+  it('solves linear equation', () => {
+    const result = equations.solveExpression('2x + 5 = 15');
+    expect(result.solutions[0]).toBe(5);
+  });
+
+  it('solves quadratic equation x^2 - 4 = 0', () => {
+    const result = equations.solveExpression('x^2 - 4 = 0');
+    expect(result.type).toBe('quadratic');
+    expect(result.solutions).toHaveLength(2);
+    expect(result.solutions).toContain(2);
+    expect(result.solutions).toContain(-2);
+  });
+
+  it('solves quadratic equation x^2 - 5x + 6 = 0', () => {
+    const result = equations.solveExpression('x^2 - 5x + 6 = 0');
+    expect(result.type).toBe('quadratic');
+    expect(result.solutions).toContain(2);
+    expect(result.solutions).toContain(3);
+  });
+
+  it('throws on invalid equation format', () => {
+    expect(() => equations.solveExpression('2x + 5')).toThrow('Invalid equation format');
+  });
+
+  it('handles complex roots gracefully', () => {
+    const result = equations.solveExpression('x^2 + 1 = 0');
+    expect(result.type).toBe('quadratic');
+    expect(result.discriminant).toBe('negative');
   });
 });

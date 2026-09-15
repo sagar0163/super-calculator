@@ -5,7 +5,17 @@
 export class Matrix {
   constructor(data) {
     if (!Array.isArray(data) || data.length === 0) {
-      throw new Error('Invalid matrix data');
+      throw new Error('Invalid matrix data: must be a non-empty array');
+    }
+    for (let i = 0; i < data.length; i++) {
+      if (!Array.isArray(data[i])) {
+        throw new Error(`Invalid matrix data: row ${i} is not an array`);
+      }
+      if (data[i].length !== data[0].length) {
+        throw new Error(
+          `Invalid matrix data: row ${i} has length ${data[i].length}, expected ${data[0].length}. All rows must have the same length.`
+        );
+      }
     }
     this.data = data;
     this.rows = data.length;
