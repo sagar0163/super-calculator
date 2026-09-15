@@ -7,6 +7,12 @@
   "bin": {
     "calc": "./src/cli.js"
   },
+  "files": [
+    "src/",
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
@@ -22,8 +28,8 @@
   "author": "Sagar Jadhav",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^5.6.2",
-    "expr-eval": "^2.0.2"
+    "chalk": "^4.1.2",
+    "mathjs": "^15.2.0"
   },
   "devDependencies": {
     "vitest": "^5.0.0"
