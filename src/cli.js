@@ -51,10 +51,14 @@ async function main() {
   // Unit conversion
   const convertIdx = args.indexOf('--convert');
   if (convertIdx !== -1) {
-    const value = parseFloat(args[convertIdx + 1]);
-    const from = args[convertIdx + 2];
-    const to = args[convertIdx + 3];
-    console.log(`${value} ${from} = ${to} (conversion)`);
+    try {
+      const { value, from, to } = parseConvertArgs(args.slice(convertIdx + 1));
+      const result = calc.units.convert(value, from, to);
+      console.log(`${value} ${from} = ${formatNumber(result)} ${to}`);
+    } catch (err) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
     return;
   }
 
@@ -74,6 +78,23 @@ async function main() {
   }
 }
 
+function parseConvertArgs(tokens) {
+  const parts = tokens.flatMap(t => String(t).split(/\s+/)).filter(Boolean).filter(t => t !== 'to');
+  const value = parseFloat(parts[0]);
+  const from = parts[1];
+  const to = parts[2];
+  if (!Number.isFinite(value) || !from || !to) {
+    throw new Error(
+      'Usage: calc --convert <value> <from> <to>, e.g. calc --convert 100 km to miles'
+    );
+  }
+  return { value, from, to };
+}
+
+function formatNumber(n) {
+  return String(Number(n.toFixed(4)));
+}
+
 function showHelp() {
   console.log(`
 ${chalk.cyan('Super Calculator')} - Solve Complex Problems
@@ -89,6 +110,10 @@ ${chalk.yellow('Examples:')}
   calc "sqrt(16) + sin(45)"
   calc --stats 1 2 3 4 5
   calc --solve "2x + 5 = 15"
+  calc --convert 100 km to miles
+  calc --convert "100 km to miles"
+  calc --convert 32 f to c
+  calc --convert 1 gb to mb
 
 ${chalk.yellow('Operators:')}
   + - * / ^ ( )
