@@ -1,0 +1,6 @@
+- [ ] Inspect package.json, README.md, Dockerfile, src/cli.js
+- [ ] Add chalk, vitest, and any parser to package.json
+- [ ] Fix version in package.json and README.md
+- [ ] Run `npm install` to generate package-lock.json
+- [ ] Fix Dockerfile to use `npm ci`
+- [ ] Run tests to verify
