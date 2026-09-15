@@ -2,6 +2,7 @@
  * Super Calculator - Main Entry
  */
 
+import { Parser } from 'expr-eval';
 import BasicOperations from './operations/basic.js';
 import ScientificOperations from './operations/scientific.js';
 import Complex from './operations/complex.js';
@@ -10,6 +11,10 @@ import Statistics from './operations/statistics.js';
 import Financial from './operations/financial.js';
 import UnitConverter from './operations/units.js';
 import EquationSolver from './operations/equations.js';
+
+const parser = new Parser();
+parser.consts.pi = Math.PI;
+parser.consts.e = Math.E;
 
 export class Calculator {
   constructor() {
@@ -21,35 +26,23 @@ export class Calculator {
     this.equations = new EquationSolver();
   }
 
-  // Evaluate expression string
-  evaluate(expression) {
-    // Safe evaluation of basic math expressions
-    const safeEval = (expr) => {
-      // Replace operators with JavaScript equivalents
-      let sanitized = expr
-        .replace(/×/g, '*')
-        .replace(/÷/g, '/')
-        .replace(/\^/g, '**')
-        .replace(/sqrt\(/g, 'Math.sqrt(')
-        .replace(/sin\(/g, 'Math.sin(')
-        .replace(/cos\(/g, 'Math.cos(')
-        .replace(/tan\(/g, 'Math.tan(')
-        .replace(/log\(/g, 'Math.log(')
-        .replace(/log10\(/g, 'Math.log10(')
-        .replace(/exp\(/g, 'Math.exp(')
-        .replace(/abs\(/g, 'Math.abs(')
-        .replace(/pi/gi, 'Math.PI')
-        .replace(/e(?![x])/g, 'Math.E');
-      
-      // Only allow numbers, operators, and Math functions
-      if (!/^[\d\s+\-*/().Math,]+$/.test(sanitized)) {
-        throw new Error('Invalid characters in expression');
-      }
-      
-      return Function('"use strict"; return (' + sanitized + ')')();
-    };
-    
-    return safeEval(expression);
+  // Evaluate expression string using a safe expression parser (no eval)
+  evaluate(expression, variables = {}) {
+    if (typeof expression !== 'string' || expression.trim() === '') {
+      throw new Error('Expression must be a non-empty string');
+    }
+
+    // Normalize unicode operators to ASCII equivalents
+    const normalized = expression
+      .replace(/×/g, '*')
+      .replace(/÷/g, '/');
+
+    try {
+      return parser.parse(normalized).evaluate(variables);
+    } catch (err) {
+      const reason = err && err.message ? err.message : 'unknown error';
+      throw new Error(`Invalid expression "${expression}": ${reason}`);
+    }
   }
 }
 
