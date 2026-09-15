@@ -1,6 +1,6 @@
 # Test Coverage Plan
 - [x] Fix the build system (install vitest)
-- [ ] Add tests for Financial module
+- [x] Add tests for Financial module
 - [ ] Add tests for Matrix module
 - [ ] Add tests for EquationSolver module
 - [ ] Add tests for Scientific module
