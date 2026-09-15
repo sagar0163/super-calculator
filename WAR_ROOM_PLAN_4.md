@@ -2,7 +2,7 @@
 - [x] Fix the build system (install vitest)
 - [x] Add tests for Financial module
 - [x] Add tests for Matrix module
-- [ ] Add tests for EquationSolver module
+- [x] Add tests for EquationSolver module
 - [ ] Add tests for Scientific module
 - [ ] Add tests for Complex module
 - [ ] Add tests for UnitConverter module

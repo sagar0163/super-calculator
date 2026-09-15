@@ -72,7 +72,7 @@ export class EquationSolver {
     const match = left.match(/(-?\d*\.?\d*)?\s*\*?\s*x\s*([+-]?\s*\d+\.?\d*)?/);
     
     if (match) {
-      if (match[1] === '' || match[1] === '+') a = 1;
+      if (match[1] === undefined || match[1] === '' || match[1] === '+') a = 1;
       else if (match[1] === '-') a = -1;
       else a = parseFloat(match[1]);
       
