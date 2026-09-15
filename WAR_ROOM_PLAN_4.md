@@ -5,5 +5,5 @@
 - [x] Add tests for EquationSolver module
 - [x] Add tests for Scientific module
 - [x] Add tests for Complex module
-- [ ] Add tests for UnitConverter module
+- [x] Add tests for UnitConverter module
 - [ ] Verify test coverage >80% and all green
