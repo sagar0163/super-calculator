@@ -65,9 +65,6 @@ calc --convert 1 gallon to liter  # 1 gallon = 3.7854 liter
 # Equation solving
 calc --solve "2x + 5 = 15"
 calc --solve "x^2 - 4 = 0"
-
-# Matrix
-calc --matrix "[1,2],[3,4] * [5,6],[7,8]"
 ```
 
 ### Programmatic API
@@ -137,11 +134,10 @@ Unit names are case-insensitive and accept aliases (`meters`, `metres`, `m`, `ft
 - `futureValue(present, rate, periods)`
 
 ### Matrix
-- `matrixAdd(A, B)`
-- `matrixMultiply(A, B)`
-- `matrixDeterminant(A)`
-- `matrixInverse(A)`
-- `matrixTranspose(A)`
+- `new Matrix(data)` - create a matrix (validation built in)
+- `matrix.add(other)`, `matrix.multiply(other)`, `matrix.scalarMultiply(n)`
+- `matrix.transpose()`, `matrix.determinant()`, `matrix.inverse()`
+- `Matrix.identity(size)`, `Matrix.zeros(rows, cols)`
 
 ### Units (unified API)
 - `units.convert(value, from, to)` - Convert between any two units of the same category
@@ -178,4 +174,3 @@ MIT
 ---
 
 ⭐ Star this repo if you find it useful!
-# Update
