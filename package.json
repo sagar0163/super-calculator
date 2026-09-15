@@ -26,6 +26,8 @@
     "expr-eval": "^2.0.2"
   },
   "devDependencies": {
+    "typescript": "^7.0.2",
     "vitest": "^5.0.0"
-  }
+  },
+  "types": "./index.d.ts"
 }
