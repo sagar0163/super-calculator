@@ -56,7 +56,11 @@ calc "complex(3,4) + complex(1,2)"
 calc --stats "1,2,3,4,5"
 
 # Unit conversion
-calc --convert "100 km to miles"
+calc --convert 100 km to miles    # 100 km = 62.1371 miles
+calc --convert "100 km to miles"  # quoted form works too
+calc --convert 32 f to c          # 32 f = 0 c
+calc --convert 1 gb to mb         # 1 gb = 1024 mb
+calc --convert 1 gallon to liter  # 1 gallon = 3.7854 liter
 
 # Equation solving
 calc --solve "2x + 5 = 15"
@@ -88,7 +92,15 @@ calculator.mean([1, 2, 3, 4, 5]);  // 3
 // Financial
 calculator.compoundInterest(1000, 0.05, 10);
 calculator.loanPayment(200000, 0.06, 30);
+
+// Unit conversion (unified API)
+calculator.units.convert(100, 'km', 'miles');    // 62.1371
+calculator.units.convert(1, 'miles', 'feet');    // 5280
+calculator.units.convert(100, 'celsius', 'fahrenheit'); // 212
+calculator.units.convert(1, 'gb', 'mb');         // 1024
 ```
+
+Unit names are case-insensitive and accept aliases (`meters`, `metres`, `m`, `ft`, `lbs`, `oz`, `gb`, ...). Conversion chains through intermediate units automatically, so any two units of the same category work. Temperatures are handled with offsets (not factors). Unknown units or cross-category conversions throw a clear error.
 
 ## Available Operations
 
@@ -130,6 +142,13 @@ calculator.loanPayment(200000, 0.06, 30);
 - `matrixDeterminant(A)`
 - `matrixInverse(A)`
 - `matrixTranspose(A)`
+
+### Units (unified API)
+- `units.convert(value, from, to)` - Convert between any two units of the same category
+- `units.listUnits()` - List all supported units
+- Supported categories: **length** (km, miles, m, cm, mm, feet, inches, yards), **weight** (kg, g, mg, pounds, ounces, tonne), **temperature** (celsius, fahrenheit, kelvin), **volume** (liter, ml, gallon, fluid ounce, cup, cubic meter, cubic foot), **data** (byte, bit, kb, mb, gb, tb), **time** (second, minute, hour, day, week), **area** (sqm, sqft, hectare, acre, square km, square mile), **speed** (km/h, mph, m/s)
+
+The old individual methods (`kmToMiles`, `milesToKm`, `celsiusToFahrenheit`, ...) still work but are **deprecated** — they emit a warning and delegate to `convert()`.
 
 ## Docker
 

@@ -6,8 +6,8 @@
 - [x] Keep backward-compatible individual methods as deprecated wrappers that emit a one-time deprecation warning and delegate to `convert()`
 - [x] Implement `--convert` CLI parsing in `src/cli.js` (support `--convert 100 km to miles`, `--convert 100 km miles`, quoted `--convert "100 km to miles"`), print real result, error on bad input
 - [x] Add tests: `convert()` API correctness (km->miles, chained km->feet, temperature, all categories), unknown-unit error, deprecated method still works + warns, CLI parsing behavior
-- [ ] Update README with working `--convert` examples and programmatic `convert()` API
-- [ ] Run `npm test`, fix failures, commit incrementally
+- [x] Update README with working `--convert` examples and programmatic `convert()` API
+- [x] Run `npm test`, fix failures, commit incrementally
 
 ## Facts / Constraints
 
