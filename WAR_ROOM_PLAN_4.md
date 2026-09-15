@@ -1,0 +1,6 @@
+- [x] Add pricing.json fetch + local cache (skip, unrelated)
+- [x] Replace hardcoded model name in parseClaudeUsage (skip, unrelated)
+- [x] Add basic.test.js for basic math functions, negative/zero/overflow tests
+- [x] Add statistics.test.js for statistical edge cases (empty array, single element, correlation size mismatch)
+- [x] Ensure 100% test pass
+- [x] Verify test coverage > 80%
