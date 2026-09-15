@@ -1,6 +1,6 @@
 {
   "name": "super-calculator",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "A powerful calculator for complex mathematical problems",
   "main": "src/index.js",
   "type": "module",
@@ -22,6 +22,7 @@
   "author": "Sagar Jadhav",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^5.6.2",
     "expr-eval": "^2.0.2"
   },
   "devDependencies": {
