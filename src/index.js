@@ -148,4 +148,5 @@ export class Calculator {
   solveSystem(...args) { return this.equations.solveSystem(...args); }
 }
 
+export { Complex, Matrix };
 export default Calculator;
