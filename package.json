@@ -20,5 +20,11 @@
     "statistics"
   ],
   "author": "Sagar Jadhav",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "expr-eval": "^2.0.2"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.0"
+  }
 }
