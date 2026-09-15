@@ -48,3 +48,21 @@ describe('CLI --convert', () => {
     expect(run(['2', '+', '2'])).toBe('2 + 2 = 4');
   });
 });
+
+describe('CLI --stats', () => {
+  it('accepts comma-separated values as a single argument', () => {
+    const out = run(['--stats', '1,2,3,4,5']);
+    expect(out).toMatch(/mean/);
+    expect(out).toMatch(/3/);
+  });
+
+  it('accepts space-separated values', () => {
+    const out = run(['--stats', '1', '2', '3', '4', '5']);
+    expect(out).toMatch(/mean/);
+    expect(out).toMatch(/3/);
+  });
+
+  it('errors when no numbers are given', () => {
+    expect(() => run(['--stats'])).toThrow(/Please provide numbers for statistics/);
+  });
+});
