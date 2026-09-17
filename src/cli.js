@@ -28,7 +28,12 @@ async function main() {
 
   // Statistics mode
   if (args.includes('--stats')) {
-    const values = args.filter(a => !a.startsWith('--')).map(Number).filter(n => !isNaN(n));
+    const values = args
+      .filter(a => !a.startsWith('--'))
+      .flatMap(a => String(a).split(/[,\s]+/))
+      .filter(Boolean)
+      .map(Number)
+      .filter(n => !isNaN(n));
     if (values.length === 0) {
       console.error(chalk.red('Please provide numbers for statistics'));
       process.exit(1);

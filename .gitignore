@@ -5,3 +5,7 @@ coverage/
 *.log
 .env
 .DS_Store
+
+# scratch / build artifacts
+*.txt
+x
