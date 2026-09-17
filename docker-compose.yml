@@ -4,7 +4,5 @@ services:
   calculator:
     build: .
     image: super-calculator:latest
-    volumes:
-      - ./data:/app/data
     profiles:
       - calculator

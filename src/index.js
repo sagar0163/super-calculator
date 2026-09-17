@@ -2,7 +2,7 @@
  * Super Calculator - Main Entry
  */
 
-import { Parser } from 'expr-eval';
+import * as math from 'mathjs';
 import BasicOperations from './operations/basic.js';
 import ScientificOperations from './operations/scientific.js';
 import Complex from './operations/complex.js';
@@ -11,10 +11,6 @@ import Statistics from './operations/statistics.js';
 import Financial from './operations/financial.js';
 import UnitConverter from './operations/units.js';
 import EquationSolver from './operations/equations.js';
-
-const parser = new Parser();
-parser.consts.pi = Math.PI;
-parser.consts.e = Math.E;
 
 export class Calculator {
   constructor() {
@@ -35,10 +31,11 @@ export class Calculator {
     // Normalize unicode operators to ASCII equivalents
     const normalized = expression
       .replace(/×/g, '*')
-      .replace(/÷/g, '/');
+      .replace(/÷/g, '/')
+      .replace(/\bln\b/g, 'log');
 
     try {
-      return parser.parse(normalized).evaluate(variables);
+      return math.evaluate(normalized, variables);
     } catch (err) {
       const reason = err && err.message ? err.message : 'unknown error';
       throw new Error(`Invalid expression "${expression}": ${reason}`);

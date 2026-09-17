@@ -50,7 +50,11 @@ calc "log(100)"
 calc "sqrt(144)"
 
 # Unit conversion
-calc --convert "100 km to miles"
+calc --convert 100 km to miles    # 100 km = 62.1371 miles
+calc --convert "100 km to miles"  # quoted form works too
+calc --convert 32 f to c          # 32 f = 0 c
+calc --convert 1 gb to mb         # 1 gb = 1024 mb
+calc --convert 1 gallon to liter  # 1 gallon = 3.7854 liter
 
 # Statistics
 calc --stats 1 2 3 4 5
@@ -89,6 +93,11 @@ calc.simpleInterest(1000, 5, 10);       // 1500
 calc.compoundInterest(1000, 5, 10);     // 1647.00...
 calc.emi(200000, 6, 30);                // monthly payment
 
+// Unit conversion (unified API)
+calc.units.convert(100, 'km', 'miles');        // 62.1371
+calc.units.convert(100, 'celsius', 'fahrenheit'); // 212
+calc.units.convert(1, 'gb', 'mb');             // 1024
+
 // Complex numbers
 const z = calc.complex(3, 4);
 z.magnitude();           // 5
@@ -107,6 +116,8 @@ calc.solveExpression('2x + 5 = 15'); // { type: 'linear', solutions: [5] }
 
 The sub-modules (`calc.basic`, `calc.scientific`, `calc.stats`, `calc.finance`,
 `calc.units`, `calc.equations`) remain available for more targeted access.
+
+Unit names are case-insensitive and accept aliases (`meters`, `metres`, `m`, `ft`, `lbs`, `oz`, `gb`, ...). Conversion chains through intermediate units automatically, so any two units of the same category work. Temperatures are handled with offsets (not factors). Unknown units or cross-category conversions throw a clear error.
 
 Packaged TypeScript definitions (`index.d.ts`) give you full autocomplete and
 type checking for every public method.
@@ -182,6 +193,13 @@ Create a matrix with `calc.matrix(data)` or `Matrix.identity(size)` /
 - `solveQuadratic(a, b, c)` - Solves `ax^2 + bx + c = 0`
 - `solveExpression("2x + 5 = 15")` - Parses and solves an equation string
 - `solveSystem(a1, b1, c1, a2, b2, c2)` - Two-variable linear system
+
+### Units (unified API)
+- `units.convert(value, from, to)` - Convert between any two units of the same category
+- `units.listUnits()` - List all supported units
+- Supported categories: **length** (km, miles, m, cm, mm, feet, inches, yards), **weight** (kg, g, mg, pounds, ounces, tonne), **temperature** (celsius, fahrenheit, kelvin), **volume** (liter, ml, gallon, fluid ounce, cup, cubic meter, cubic foot), **data** (byte, bit, kb, mb, gb, tb), **time** (second, minute, hour, day, week), **area** (sqm, sqft, hectare, acre, square km, square mile), **speed** (km/h, mph, m/s)
+
+The old individual methods (`kmToMiles`, `milesToKm`, `celsiusToFahrenheit`, ...) still work but are **deprecated** — they emit a warning and delegate to `convert()`.
 
 ## Docker
 
