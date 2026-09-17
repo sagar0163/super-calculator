@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import Calculator from '../../src/index.js';
-import Matrix from '../../src/operations/matrix.js';
+import Calculator, { Complex, Matrix } from '../../src/index.js';
 
 describe('Calculator', () => {
   const calc = new Calculator();
@@ -82,6 +81,70 @@ describe('Calculator', () => {
   it('should reject object member access', () => {
     expect(() => calc.evaluate('Math.random')).toThrow(/Invalid expression/);
     expect(() => calc.evaluate('Math[' + 'this]')).toThrow(/Invalid expression/);
+  });
+});
+
+describe('Calculator flat API', () => {
+  const calc = new Calculator();
+
+  it('delegates basic operations', () => {
+    expect(calc.add(10, 5)).toBe(15);
+    expect(calc.subtract(10, 5)).toBe(5);
+    expect(calc.multiply(10, 5)).toBe(50);
+    expect(calc.divide(10, 5)).toBe(2);
+    expect(calc.power(2, 3)).toBe(8);
+    expect(calc.factorial(5)).toBe(120);
+  });
+
+  it('delegates scientific operations', () => {
+    expect(calc.sin(30)).toBeCloseTo(0.5);
+    expect(calc.cos(60)).toBeCloseTo(0.5);
+    expect(calc.sqrt(144)).toBe(12);
+  });
+
+  it('delegates statistics operations', () => {
+    expect(calc.mean([1, 2, 3, 4, 5])).toBe(3);
+    expect(calc.median([1, 2, 3, 4, 5])).toBe(3);
+    expect(calc.max([1, 2, 3])).toBe(3);
+  });
+
+  it('delegates financial operations', () => {
+    expect(calc.simpleInterest(1000, 5, 10)).toBe(1500);
+  });
+
+  it('delegates unit conversions', () => {
+    expect(calc.kmToMiles(1)).toBeCloseTo(0.621371);
+  });
+
+  it('delegates equation solving', () => {
+    expect(calc.solveExpression('2x + 5 = 15').solutions[0]).toBe(5);
+  });
+
+  it('complex() returns a Complex instance', () => {
+    const z = calc.complex(3, 4);
+    expect(z).toBeInstanceOf(Complex);
+    expect(z.re).toBe(3);
+    expect(z.im).toBe(4);
+    expect(z.magnitude()).toBe(5);
+  });
+
+  it('matrix() returns a Matrix instance', () => {
+    const m = calc.matrix([[1, 2], [3, 4]]);
+    expect(m).toBeInstanceOf(Matrix);
+    expect(m.rows).toBe(2);
+    expect(m.cols).toBe(2);
+    expect(m.determinant()).toBe(-2);
+  });
+
+  it('still exposes sub-modules', () => {
+    expect(calc.basic.add(10, 5)).toBe(15);
+    expect(calc.scientific.sin(30)).toBeCloseTo(0.5);
+    expect(calc.stats.mean([1, 2, 3, 4, 5])).toBe(3);
+  });
+
+  it('exports Complex and Matrix as named exports', () => {
+    expect(new Complex(1, 2)).toBeInstanceOf(Complex);
+    expect(new Matrix([[1]])).toBeInstanceOf(Matrix);
   });
 });
 

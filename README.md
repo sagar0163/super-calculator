@@ -49,18 +49,15 @@ calc "cos(90)"
 calc "log(100)"
 calc "sqrt(144)"
 
-# Complex numbers
-calc "complex(3,4) + complex(1,2)"
-
-# Statistics
-calc --stats "1,2,3,4,5"
-
 # Unit conversion
 calc --convert 100 km to miles    # 100 km = 62.1371 miles
 calc --convert "100 km to miles"  # quoted form works too
 calc --convert 32 f to c          # 32 f = 0 c
 calc --convert 1 gb to mb         # 1 gb = 1024 mb
 calc --convert 1 gallon to liter  # 1 gallon = 3.7854 liter
+
+# Statistics
+calc --stats 1 2 3 4 5
 
 # Equation solving
 calc --solve "2x + 5 = 15"
@@ -69,75 +66,133 @@ calc --solve "x^2 - 4 = 0"
 
 ### Programmatic API
 
+All operation modules are flattened onto the `Calculator` instance, so you can call
+`add`, `sin`, `mean`, etc. directly.
+
 ```javascript
-const calculator = require('./src/index.js');
+import Calculator from 'super-calculator';
+
+const calc = new Calculator();
 
 // Basic operations
-calculator.add(10, 5);      // 15
-calculator.subtract(10, 5); // 5
-calculator.multiply(10, 5); // 50
-calculator.divide(10, 5);   // 2
+calc.add(10, 5);        // 15
+calc.subtract(10, 5);   // 5
+calc.multiply(10, 5);   // 50
+calc.divide(10, 5);     // 2
 
 // Scientific
-calculator.sin(45);
-calculator.cos(45);
-calculator.sqrt(144);
+calc.sin(45);           // 0.7071...
+calc.cos(45);
+calc.sqrt(144);         // 12
 
 // Statistics
-calculator.mean([1, 2, 3, 4, 5]);  // 3
+calc.mean([1, 2, 3, 4, 5]); // 3
 
-// Financial
-calculator.compoundInterest(1000, 0.05, 10);
-calculator.loanPayment(200000, 0.06, 30);
+// Financial (rate is a percentage, e.g. 5 = 5%)
+calc.simpleInterest(1000, 5, 10);       // 1500
+calc.compoundInterest(1000, 5, 10);     // 1647.00...
+calc.emi(200000, 6, 30);                // monthly payment
 
 // Unit conversion (unified API)
-calculator.units.convert(100, 'km', 'miles');    // 62.1371
-calculator.units.convert(1, 'miles', 'feet');    // 5280
-calculator.units.convert(100, 'celsius', 'fahrenheit'); // 212
-calculator.units.convert(1, 'gb', 'mb');         // 1024
+calc.units.convert(100, 'km', 'miles');        // 62.1371
+calc.units.convert(100, 'celsius', 'fahrenheit'); // 212
+calc.units.convert(1, 'gb', 'mb');             // 1024
+
+// Complex numbers
+const z = calc.complex(3, 4);
+z.magnitude();           // 5
+z.conjugate();           // 3 - 4i
+
+// Matrices
+const m = calc.matrix([[1, 2], [3, 4]]);
+m.rows;                  // 2
+m.cols;                  // 2
+m.determinant();         // -2
+m.inverse();
+
+// Equation solving
+calc.solveExpression('2x + 5 = 15'); // { type: 'linear', solutions: [5] }
 ```
+
+The sub-modules (`calc.basic`, `calc.scientific`, `calc.stats`, `calc.finance`,
+`calc.units`, `calc.equations`) remain available for more targeted access.
 
 Unit names are case-insensitive and accept aliases (`meters`, `metres`, `m`, `ft`, `lbs`, `oz`, `gb`, ...). Conversion chains through intermediate units automatically, so any two units of the same category work. Temperatures are handled with offsets (not factors). Unknown units or cross-category conversions throw a clear error.
 
+Packaged TypeScript definitions (`index.d.ts`) give you full autocomplete and
+type checking for every public method.
+
+```typescript
+import Calculator from 'super-calculator';
+
+const calc = new Calculator();
+const total: number = calc.add(10, 5);
+const z = calc.complex(3, 4); // Complex
+```
+
 ## Available Operations
+
+All methods below are called directly on a `Calculator` instance (`calc.<method>`).
 
 ### Basic
 - `add(a, b)` - Addition
-- `subtract(a, b)` - Subtraction  
+- `subtract(a, b)` - Subtraction
 - `multiply(a, b)` - Multiplication
 - `divide(a, b)` - Division
-- `mod(a, b)` - Modulo
+- `modulo(a, b)` - Modulo
 - `power(a, b)` - Exponent
 - `sqrt(n)` - Square root
-- `root(n, x)` - nth root
+- `factorial(n)` - n!
+- `gcd(a, b)`, `lcm(a, b)`
 
 ### Scientific
-- `sin(angle)`, `cos(angle)`, `tan(angle)`
-- `asin(angle)`, `acos(angle)`, `atan(angle)`
-- `log(n)` - Base 10 log
-- `ln(n)` - Natural log
+- `sin(deg)`, `cos(deg)`, `tan(deg)` - Degrees
+- `asin(v)`, `acos(v)`, `atan(v)` - Return degrees
+- `sinh(x)`, `cosh(x)`, `tanh(x)`
+- `log(n, base?)` - Log with any base (natural log by default)
+- `log10(n)`, `log2(n)`
 - `exp(n)` - e^n
-- `factorial(n)` - n!
+- `abs(n)`, `floor(n)`, `ceil(n)`, `round(n)`, `roundTo(n, decimals)`
 
 ### Statistics
 - `mean(array)` - Average
 - `median(array)` - Middle value
-- `mode(array)` - Most common
-- `stdDev(array)` - Standard deviation
-- `variance(array)` - Variance
-- `min(array)`, `max(array)`
+- `mode(array)` - Most common value(s), `null` if all distinct
+- `stdDev(array, sample?)` - Standard deviation (sample by default)
+- `variance(array, sample?)` - Variance (sample by default)
+- `min(array)`, `max(array)`, `range(array)`
+- `percentile(array, p)` - p in 0-100
+- `quartiles(array)` - `{ q1, q2, q3 }`
+- `correlation(x, y)` - Pearson correlation of two arrays
+- `summary(array)` - Full statistical summary
 
-### Financial
-- `compoundInterest(principal, rate, time)`
+### Financial (rates as percentages)
 - `simpleInterest(principal, rate, time)`
-- `loanPayment(principal, rate, years)`
-- `futureValue(present, rate, periods)`
+- `compoundInterest(principal, rate, time, frequency?)`
+- `emi(principal, annualRate, years)` - Monthly loan payment
+- `futureValue(principal, rate, time, compoundingFrequency?)`
+- `presentValue(futureValue, rate, time, compoundingFrequency?)`
+- `roi(initialInvestment, finalValue)`
+- `cagr(initialValue, finalValue, years)`
+- `npv(rate, cashFlows)`
+- `profitMargin(revenue, cost)`
+- `breakEven(fixedCosts, pricePerUnit, variableCostPerUnit)`
+
+### Complex
+Create a complex number with `calc.complex(re, im)`. The returned `Complex`
+instance supports `add`, `subtract`, `multiply`, `divide`, `magnitude`,
+`argument`, `conjugate`, `sqrt`, `exp`, `log`, and `toString`.
 
 ### Matrix
-- `new Matrix(data)` - create a matrix (validation built in)
-- `matrix.add(other)`, `matrix.multiply(other)`, `matrix.scalarMultiply(n)`
-- `matrix.transpose()`, `matrix.determinant()`, `matrix.inverse()`
-- `Matrix.identity(size)`, `Matrix.zeros(rows, cols)`
+Create a matrix with `calc.matrix(data)` or `Matrix.identity(size)` /
+`Matrix.zeros(rows, cols)`. The returned `Matrix` instance supports `add`,
+`multiply`, `scalarMultiply`, `transpose`, `determinant`, and `inverse`.
+
+### Equations
+- `solveLinear(a, b)` - Solves `ax + b = 0`
+- `solveQuadratic(a, b, c)` - Solves `ax^2 + bx + c = 0`
+- `solveExpression("2x + 5 = 15")` - Parses and solves an equation string
+- `solveSystem(a1, b1, c1, a2, b2, c2)` - Two-variable linear system
 
 ### Units (unified API)
 - `units.convert(value, from, to)` - Convert between any two units of the same category
