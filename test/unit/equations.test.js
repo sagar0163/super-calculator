@@ -60,6 +60,16 @@ describe('EquationSolver Module', () => {
       const res = solver.solveExpression('x - 3 = 0');
       expect(res.x).toBe(3);
     });
+    it('solves expression with bare negative coefficient', () => {
+      const res = solver.solveExpression('-x + 3 = 1');
+      expect(res.type).toBe('linear');
+      expect(res.x).toBe(2);
+    });
+    it('solves expression with no constant on the left', () => {
+      const res = solver.solveExpression('2x = 8');
+      expect(res.type).toBe('linear');
+      expect(res.x).toBe(4);
+    });
     it('throws on invalid format (no equals)', () => {
       expect(() => solver.solveExpression('2x + 5')).toThrow('Invalid equation format');
     });

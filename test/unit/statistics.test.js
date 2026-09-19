@@ -53,6 +53,11 @@ describe('Statistics', () => {
     expect(stats.percentile([1, 2, 3, 4, 5], 75)).toBe(4);
   });
 
+  it('should interpolate percentile at non-integer index', () => {
+    expect(stats.percentile([10, 20, 30, 40], 50)).toBe(25);
+    expect(stats.percentile([10, 20, 30, 40], 25)).toBe(17.5);
+  });
+
   it('should calculate quartiles', () => {
     expect(stats.quartiles([1, 2, 3, 4, 5])).toEqual({
       q1: 2,
