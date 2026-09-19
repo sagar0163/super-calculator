@@ -16,9 +16,10 @@
 - [x] Overall coverage 99.64% lines, 160 tests green
 
 ### Remaining work for this session
-- [ ] Add tests for the last uncovered branches:
-  - [ ] equations `solveExpression` with bare `-` coefficient (`-x + 3 = 1`)
-  - [ ] statistics `percentile` interpolation branch (non-integer index)
+- [x] Add tests for the last uncovered branches:
+  - [x] equations `solveExpression` with bare `-` coefficient (`-x + 3 = 1`)
+  - [x] statistics `percentile` interpolation branch (non-integer index)
+  - [x] equations no-constant-left expression (`2x = 8`) → 163 tests, 100% lines/branches 99.18%
 - [ ] Remove stray junk artifacts tracked on branch (`*.txt`, `x`) — already cleaned on main
 - [ ] Restore `.gitignore` scratch entries (`*.txt`, `x`) deleted at branch point
 - [ ] Re-run full suite + coverage, confirm 100% green and >80% lines
